@@ -30,3 +30,5 @@ def run_dna_rna_tools(*seq_data):
     else:
         return rez
 
+def filter_fastq(seqs, gc_bounds, length_bounds, quality_threshold):
+    pass
