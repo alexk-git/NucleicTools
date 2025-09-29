@@ -5,11 +5,14 @@ The aggregatin function run_dna_rna_tools accepts an arbitrary number of argumen
 
 The following procedres are available:
 
-is_nucleic_acid - returns a Boolean result of a sequence check
-transcribe - returns the transcribed sequence
-reverse - returns the reversed sequence
-complement - returns the complementary sequence
-reverse_complement - returns the reverse complementary sequence
+`is_nucleic_acid` - returns a Boolean result of a sequence check
+`is_rna` - returns a Boolean result of a RNA-sequence check
+`is_dna` - returns a Boolean result of a DNA-sequence check
+`transcribe` - returns the transcribed sequence
+`reverse` - returns the reversed sequence
+`complement` - returns the complementary sequence
+`reverse_complement` - returns the reverse complementary sequence
+
 
 ## Usage example
 ```
