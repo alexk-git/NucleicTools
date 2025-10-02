@@ -1,3 +1,4 @@
+import modules.dna_rna_tools
 
 def run_dna_rna_tools(*seq_data):
     '''
@@ -32,3 +33,6 @@ def run_dna_rna_tools(*seq_data):
 
 def filter_fastq(seqs, gc_bounds, length_bounds, quality_threshold):
     pass
+
+if __name__ == "__main__":
+    run_dna_rna_tools()
