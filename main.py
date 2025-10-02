@@ -3,6 +3,26 @@ import modules.dna_rna_tools
 def run_dna_rna_tools(*seq_data):
     '''
     One function to rule them all!
+    
+    Receives one or more comma-separated sequences as input and desired prodedure,
+    can do the following:
+        is_nucleic_acid - returns a Boolean result of a sequence check
+        is_rna - returns a Boolean result of a RNA-sequence check
+        is_dna - returns a Boolean result of a DNA-sequence check
+        transcribe - returns the transcribed sequence
+        reverse - returns the reversed sequence
+        complement - returns the complementary sequence
+        reverse_complement - returns the reverse complementary sequence
+    
+    Arguments: 
+        sequence: one or several, comma-separated
+        last argument as always a desired prodecure
+    
+    Returns:
+        one or list of sequences
+
+    Raises:
+        exceptions if something went wrong.
     '''
     to_do = seq_data[-1]
     rez = []
@@ -31,7 +51,23 @@ def run_dna_rna_tools(*seq_data):
     else:
         return rez
 
-def filter_fastq(seqs, gc_bounds, length_bounds, quality_threshold):
+def filter_fastq(seqs: dict, gc_bounds: tuple = (0, 100), length_bounds: tuple = (0, 2**32), quality_threshold: int = 0) -> dict:
+    '''
+    A function working with fastq sequences.
+    All bounds in cluded all quality in phred33.
+    
+    Arguments: 
+        seqs: dict # of a fastq sequences key: sequence_name string, value: tupple: (sequence: str, quality: str)
+        gc_bounds: tuple = (0, 100) # bound included
+        length_bounds: tuple = (0, 2**32) # bound included
+        quality_threshold: int = 0 # in phred33
+    
+    Returns:
+        dictionary consisting only of sequences that satisfy all conditions.
+
+    Raises:
+        exceptions if something went wrong.
+    '''
     pass
 
 if __name__ == "__main__":
