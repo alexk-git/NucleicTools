@@ -1,4 +1,4 @@
-# NocleicTools
+# NucleicTools
 Tools for working with nucleotides and their sequences.
 
 The aggregatin function `run_dna_rna_tools` accepts an arbitrary number of arguments containing DNA or RNA sequences (str), as well as the name of the procedure to be executed (this is always the last argument; see the usage example). It then performs the specified operation on all the passed sequences and returns the result.
