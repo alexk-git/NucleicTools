@@ -1,4 +1,6 @@
 import modules.dna_rna_tools
+import modules.fastq_tools
+
 
 def run_dna_rna_tools(*seq_data):
     '''
@@ -54,10 +56,13 @@ def run_dna_rna_tools(*seq_data):
 def filter_fastq(seqs: dict, gc_bounds: tuple = (0, 100), length_bounds: tuple = (0, 2**32), quality_threshold: int = 0) -> dict:
     '''
     A function working with fastq sequences.
-    All bounds in cluded all quality in phred33.
+    All bounds is included.
+    Quality in Phred33.
+
+    Input:
+        seqs: dict # of a fastq sequences key: sequence_name string, value: tupple: (sequence: str, quality: str)
     
     Arguments: 
-        seqs: dict # of a fastq sequences key: sequence_name string, value: tupple: (sequence: str, quality: str)
         gc_bounds: tuple = (0, 100) # bound included
         length_bounds: tuple = (0, 2**32) # bound included
         quality_threshold: int = 0 # in phred33
@@ -68,7 +73,10 @@ def filter_fastq(seqs: dict, gc_bounds: tuple = (0, 100), length_bounds: tuple =
     Raises:
         exceptions if something went wrong.
     '''
-    pass
+
+    rez = {}
+
+    
 
 if __name__ == "__main__":
     run_dna_rna_tools()
