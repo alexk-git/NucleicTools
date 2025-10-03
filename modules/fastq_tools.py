@@ -2,27 +2,36 @@
     Specialized functions for processing DNA/RNA sequences
     Each function performs one processing of one sequence, the sequence is a string.
 
+    Functions:
+        nucl_count: count nucleotides in sequence
+        gc_count: count GC-content in sequenct
+        average_quality: count average quality of sequence from the sequence quality string
+
+    Raises:
+        ValueError: if wrong sequence
+
 '''
 
-import dna_rna_tools
+from . import dna_rna_tools
 
 def nucl_count(posl: str, nucl: str) -> int:
     '''
     Returns the number (amount) of nucleotide (nucl) in a sequence (posl) 
     '''
-    
-    posl = posl.lower()
-    nucl = nucl.lower()
-    nc = 0
-    for i in range(len(posl)):
-        if posl[i] == nucl:
-            nc += 1
+
+    if dna_rna_tools.is_nucleic_acid(posl):
+        posl = posl.lower()
+        nucl = nucl.lower()
+        nc = 0
+        for i in range(len(posl)):
+            if posl[i] == nucl:
+                nc += 1
            
     return nc
 
 def gc_count(read: str) -> float:
     '''
-    Return GC-cont (in %) of the read
+    Return GC-content (in %) of the read
 
     Arguments:
         read: string of nucleotides
@@ -61,8 +70,10 @@ def average_quality(read: tuple) -> int:
 
     seq_score = 0
 
-    for i in range(len(read_1[0])):
-        seq_score += int(scores[read_1[1][i]])
+    for i in range(len(read[0])):
+        seq_score += int(scores[read[1][i]])
 
-    return round(seq_score/len(read_1[0]))
+    return round(seq_score/len(read[0]))
 
+if __name__ == "__main__":
+    pass

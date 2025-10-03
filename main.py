@@ -1,3 +1,4 @@
+from typing import Union
 import modules.dna_rna_tools
 import modules.fastq_tools
 
@@ -53,7 +54,7 @@ def run_dna_rna_tools(*seq_data):
     else:
         return rez
 
-def filter_fastq(seqs: dict, gc_bounds: tuple = (0, 100), length_bounds: tuple = (0, 2**32), quality_threshold: int = 0) -> dict:
+def filter_fastq(seqs: dict, gc_bounds: Union[int, tuple] = (0, 100), length_bounds: Union[int, tuple] = (0, 2**32), quality_threshold: int = 0) -> dict:
     '''
     A function working with fastq sequences.
     All bounds is included.
@@ -75,6 +76,9 @@ def filter_fastq(seqs: dict, gc_bounds: tuple = (0, 100), length_bounds: tuple =
     '''
 
     rez = {}
+
+    if type(gc_bounds) == int: gc_bounds = (0, gc_bounds)
+    if type(length_bounds) == int: length_bounds = (0, length_bounds)
     
     for key in seqs.keys():
         if (gc_bounds[0] <= modules.fastq_tools.gc_count(seqs[key][0])) and (modules.fastq_tools.gc_count(seqs[key][0]) <= gc_bounds[1]):
@@ -92,4 +96,4 @@ def filter_fastq(seqs: dict, gc_bounds: tuple = (0, 100), length_bounds: tuple =
     
 
 if __name__ == "__main__":
-    run_dna_rna_tools()
+    pass
