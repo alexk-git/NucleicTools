@@ -25,7 +25,7 @@
         ValueError: if wrong sequence
 '''
 
-def is_nucleic_acid(posl: str):
+def is_nucleic_acid(posl: str) -> bool:
     '''
     Check if posl is valid DNA or RNA sequence.
     '''
@@ -38,7 +38,7 @@ def is_nucleic_acid(posl: str):
         return False
 
 
-def is_dna(posl: str):
+def is_dna(posl: str) -> bool:
     '''
     Check if posl is valid DNA sequence.
     '''
@@ -49,7 +49,7 @@ def is_dna(posl: str):
         return False
 
 
-def is_rna(posl: str):
+def is_rna(posl: str) -> bool:
     '''
     Check if posl is valid RNA sequence.
     '''
@@ -60,7 +60,7 @@ def is_rna(posl: str):
         return False
 
 
-def transcribe(posl: str):
+def transcribe(posl: str) -> str:
     '''
     Return transcribed RNA from DNA sequence.
     '''
@@ -94,14 +94,14 @@ def transcribe(posl: str):
     return ''.join(rez)
 
 
-def reverse(posl: str):
+def reverse(posl: str) -> str:
     '''
     Return reversed sequence.
     '''
     return posl[::-1]
 
 
-def complement(posl: str):
+def complement(posl: str) -> str:
     '''
     Return complimented sequence.
     '''
@@ -151,7 +151,7 @@ def complement(posl: str):
     return ''.join(rez)
 
 
-def reverse_complement(posl: str):
+def reverse_complement(posl: str) -> str:
     '''
     Return reversed complimented sequence.
     '''
