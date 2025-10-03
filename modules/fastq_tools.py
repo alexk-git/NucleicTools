@@ -1,4 +1,9 @@
-# from dna_rna_tools import *
+'''
+    Specialized functions for processing DNA/RNA sequences
+    Each function performs one processing of one sequence, the sequence is a string.
+
+'''
+
 import dna_rna_tools
 
 def nucl_count(posl: str, nucl: str) -> int:
@@ -29,7 +34,7 @@ def gc_count(read: str) -> float:
         exceptions if something went wrong  
     '''
 
-    if is_nucleic_acid(read):
+    if dna_rna_tools.is_nucleic_acid(read):
         g = nucl_count(read, 'G')
         c = nucl_count(read, 'C')
         

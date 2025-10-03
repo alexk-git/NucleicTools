@@ -32,19 +32,19 @@ def run_dna_rna_tools(*seq_data):
     match to_do:
         case 'is_nucleic_acid':
             for posl in seq_data[:-1]:
-                rez.append(is_nucleic_acid(posl))
+                rez.append(modules.dna_rna_tools.is_nucleic_acid(posl))
         case 'transcribe':
             for posl in seq_data[:-1]:
-                rez.append(transcribe(posl))
+                rez.append(modules.dna_rna_tools.transcribe(posl))
         case 'reverse':
             for posl in seq_data[:-1]:
-                rez.append(reverse(posl))
+                rez.append(modules.dna_rna_tools.reverse(posl))
         case 'complement':
             for posl in seq_data[:-1]:
-                rez.append(complement(posl))
+                rez.append(modules.dna_rna_tools.complement(posl))
         case 'reverse_complement':
             for posl in seq_data[:-1]:
-                rez.append(reverse_complement(posl))
+                rez.append(modules.dna_rna_tools.reverse_complement(posl))
         case _:
             return f"Для для метода {to_do} функций нет!"
 
@@ -77,7 +77,7 @@ def filter_fastq(seqs: dict, gc_bounds: tuple = (0, 100), length_bounds: tuple =
     rez = {}
     
     for key in seqs.keys():
-        if (gc_bounds[0] <= gc_count(seqs[key][0])) and (gc_count(seqs[key][0]) <= gc_bounds[1]):
+        if (gc_bounds[0] <= modules.fastq_tools.gc_count(seqs[key][0])) and (modules.fastq_tools.gc_count(seqs[key][0]) <= gc_bounds[1]):
             rez[key] = seqs[key]
 
     for key in seqs.keys():
@@ -85,7 +85,7 @@ def filter_fastq(seqs: dict, gc_bounds: tuple = (0, 100), length_bounds: tuple =
             rez[key] = seqs[key]
 
     for key in seqs.keys():
-        if average_quality(seqs[key]) == quality_threshold:
+        if modules.fastq_tools.average_quality(seqs[key]) >= quality_threshold:
             rez[key] = seqs[key]
 
     return rez
