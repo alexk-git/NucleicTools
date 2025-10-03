@@ -75,7 +75,20 @@ def filter_fastq(seqs: dict, gc_bounds: tuple = (0, 100), length_bounds: tuple =
     '''
 
     rez = {}
+    
+    for key in seqs.keys():
+        if (gc_bounds[0] <= gc_count(seqs[key][0])) and (gc_count(seqs[key][0]) <= gc_bounds[1]):
+            rez[key] = seqs[key]
 
+    for key in seqs.keys():
+        if (length_bounds[0] <= len(seqs[key][0])) and (len(seqs[key][0]) <= length_bounds[1]):
+            rez[key] = seqs[key]
+
+    for key in seqs.keys():
+        if average_quality(seqs[key]) == quality_threshold:
+            rez[key] = seqs[key]
+
+    return rez
     
 
 if __name__ == "__main__":
