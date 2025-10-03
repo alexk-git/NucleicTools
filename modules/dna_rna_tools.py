@@ -1,6 +1,6 @@
 '''
     Specialized functions for processing DNA/RNA sequences
-    Each function performs one processing of one sequence, the sequence is a string.
+    Each function performs one processing of one sequence (str).
 
     Functions:
         is_nucleic_acid: Validate if sequence contains only valid nucleotides
@@ -24,6 +24,7 @@
     Raises:
         ValueError: if wrong sequence
 '''
+
 
 def is_nucleic_acid(posl: str) -> bool:
     '''
@@ -156,3 +157,7 @@ def reverse_complement(posl: str) -> str:
     Return reversed complimented sequence.
     '''
     return reverse(complement(posl))
+
+
+if __name__ == "__main__":
+    pass
