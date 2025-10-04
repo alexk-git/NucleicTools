@@ -26,50 +26,41 @@
 '''
 
 
-def is_nucleic_acid(posl: str) -> bool:
+def is_nucleic_acid(seq: str) -> bool:
     '''
-    Check if posl is valid DNA or RNA sequence.
+    Check if sequence (seq) is valid DNA or RNA sequence.
     '''
     dna = set("atcg")
     rna = set("aucg")
 
-    if set(posl.lower()) <= dna or set(posl.lower()) <= rna:
-        return True
-    else:
-        return False
+    return set(seq.lower()) <= dna or set(seq.lower()) <= rna:
 
 
-def is_dna(posl: str) -> bool:
+def is_dna(seq: str) -> bool:
     '''
-    Check if posl is valid DNA sequence.
+    Check if sequence (seq) is valid DNA sequence.
     '''
     dna = set("atcg")
-    if set(posl.lower()) <= dna:
-        return True
-    else:
-        return False
+    return set(seq.lower()) <= dna
 
 
-def is_rna(posl: str) -> bool:
+def is_rna(seq: str) -> bool:
     '''
-    Check if posl is valid RNA sequence.
+    Check if sequence (seq) is valid RNA sequence.
     '''
     rna = set("aucg")
-    if set(posl.lower()) <= rna:
-        return True
-    else:
-        return False
+    return set(seq.lower()) <= rna
 
 
-def transcribe(posl: str) -> str:
+def transcribe(seq: str) -> str:
     '''
     Return transcribed RNA from DNA sequence.
     '''
-    if not is_dna(posl):
-        raise ValueError(f"{posl} is not DNA, can transcribe only DNA.")
+    if not is_dna(seq):
+        raise ValueError(f"{seq} is not DNA, can transcribe only DNA.")
     rez = []
-    for i in posl:
-        match i:
+    for n in seq:
+        match n:
             case 'a':
                 rez.append('a')
             case 'A':
@@ -95,24 +86,24 @@ def transcribe(posl: str) -> str:
     return ''.join(rez)
 
 
-def reverse(posl: str) -> str:
+def reverse(seq: str) -> str:
     '''
     Return reversed sequence.
     '''
-    return posl[::-1]
+    return seq[::-1]
 
 
-def complement(posl: str) -> str:
+def complement(seq: str) -> str:
     '''
     Return complimented sequence.
     '''
-    if not is_nucleic_acid(posl):
-        raise ValueError(f"{posl} is not DNA or RNA sqeuence!")
+    if not is_nucleic_acid(seq):
+        raise ValueError(f"{seq} is not DNA or RNA sqeuence!")
     rez = []
 
-    if is_dna(posl):
-        for i in posl:
-            match i:
+    if is_dna(seq):
+        for n in seq:
+            match n:
                 case 'a':
                     rez.append('t')
                 case 'A':
@@ -129,9 +120,9 @@ def complement(posl: str) -> str:
                     rez.append('c')
                 case 'G':
                     rez.append('C')
-        if is_rna(posl):
-            for i in posl:
-                match i:
+        if is_rna(seq):
+            for n in seq:
+                match n:
                     case 'a':
                         rez.append('u')
                     case 'A':
@@ -152,11 +143,11 @@ def complement(posl: str) -> str:
     return ''.join(rez)
 
 
-def reverse_complement(posl: str) -> str:
+def reverse_complement(seq: str) -> str:
     '''
     Return reversed complimented sequence.
     '''
-    return reverse(complement(posl))
+    return reverse(complement(seq))
 
 
 if __name__ == "__main__":
