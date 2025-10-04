@@ -33,7 +33,7 @@ def is_nucleic_acid(seq: str) -> bool:
     dna = set("atcg")
     rna = set("aucg")
 
-    return set(seq.lower()) <= dna or set(seq.lower()) <= rna:
+    return set(seq.lower()) <= dna or set(seq.lower()) <= rna
 
 
 def is_dna(seq: str) -> bool:

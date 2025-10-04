@@ -47,7 +47,7 @@ def run_dna_rna_tools(*seq_data):
             for posl in seq_data[:-1]:
                 rez.append(modules.dna_rna_tools.reverse_complement(posl))
         case _:
-            return f"Для для метода {to_do} функций нет!"
+            return f"There are no procerure for the {to_do} method!"
 
     if len(rez) == 1:
         return rez[0]
@@ -76,7 +76,7 @@ def filter_fastq(seqs: dict, gc_bounds: Union[int, tuple] = (0, 100), length_bou
         exceptions if something went wrong.
     '''
 
-
+    if not isinstance(seqs, dict): raise TypeError("seqs must be a dictionary")
     if isinstance(gc_bounds, int): gc_bounds = (0, gc_bounds)
     if isinstance(length_bounds, int): length_bounds = (0, length_bounds)
 
