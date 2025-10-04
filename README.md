@@ -1,6 +1,7 @@
 # NucleicTools
 Tools for working with nucleotides and their sequences.
 
+## run_dna_rna_tools
 The aggregation function `run_dna_rna_tools` accepts an arbitrary number of arguments containing DNA or RNA sequences (str), as well as the name of the procedure to be executed (this is always the last argument; see the usage example). It then performs the specified operation on all the passed sequences and returns the result.
 
 The following procedres are available:
@@ -19,7 +20,7 @@ The following procedres are available:
 
 `reverse_complement` - returns the reverse complementary sequence
 
-## run_dna_rna_tools usage example
+### run_dna_rna_tools usage example
 ```
 run_dna_rna_tools('TTUU', 'is_nucleic_acid') # False !!
 run_dna_rna_tools('ATG', 'transcribe') # 'AUG'
@@ -29,6 +30,7 @@ run_dna_rna_tools('ATg', 'reverse_complement') # 'cAT'
 run_dna_rna_tools('ATG', 'aT', 'reverse') # ['GTA', 'Ta']
 ```
 
+## filter_fastq
 The filtration function `filter_fastq` accepts four arguments: seqs, gc_bounds, length_bounds, quality_threshold:
 
 `seqs` is a dictionary of fastq sequences: key is a string name of the sequence, the value is a tuple of two strings: the sequence and the quality in phred33 scale.
@@ -41,7 +43,7 @@ The filtration function `filter_fastq` accepts four arguments: seqs, gc_bounds, 
 
 returns a dictionary similar to the input one, but consisting only of those sequences that satisfy all filtering conditions.
 
-## filter_fastq usage example
+### filter_fastq usage example
 
 ```
 fastq_dict = {
