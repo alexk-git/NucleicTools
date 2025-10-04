@@ -73,6 +73,4 @@ Functions raise appropriate exceptions for invalid inputs.
 Python 3.11+
 
 ## License
-MIT License
-
-
+MIT License - see [LICENSE](LICENSE) file for details.
