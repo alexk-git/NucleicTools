@@ -120,25 +120,26 @@ def complement(seq: str) -> str:
                     rez.append('c')
                 case 'G':
                     rez.append('C')
-        if is_rna(seq):
-            for n in seq:
-                match n:
-                    case 'a':
-                        rez.append('u')
-                    case 'A':
-                        rez.append('U')
-                    case 'u':
-                        rez.append('a')
-                    case 'U':
-                        rez.append('A')
-                    case 'c':
-                        rez.append('g')
-                    case 'C':
-                        rez.append('G')
-                    case 'g':
-                        rez.append('c')
-                    case 'G':
-                        rez.append('C')
+
+    if is_rna(seq):
+        for n in seq:
+            match n:
+                case 'a':
+                    rez.append('u')
+                case 'A':
+                    rez.append('U')
+                case 'u':
+                    rez.append('a')
+                case 'U':
+                    rez.append('A')
+                case 'c':
+                    rez.append('g')
+                case 'C':
+                    rez.append('G')
+                case 'g':
+                    rez.append('c')
+                case 'G':
+                    rez.append('C')
 
     return ''.join(rez)
 
