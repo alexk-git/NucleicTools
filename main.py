@@ -132,12 +132,14 @@ def filter_fastq(input_fastq: str, output_fastq: str, gc_bounds: Union[int, tupl
 
                 # print(rez_quality_threshold)
                 if len(rez_quality_threshold.keys())>0:
-                    with path_to_write.open("a", encoding="utf-8") as file_w:
-                        for key in rez_quality_threshold.keys():
-                            file_w.write(key+'\n')
-                            file_w.write(rez_quality_threshold[key][0]+'\n')
-                            file_w.write(seq_plus+'\n')
-                            file_w.write(rez_quality_threshold[key][1]+'\n')
+                    rez_quality_threshold['plus'] = seq_plus
+                    modules.fastq_tools.write_seq_to_fle(path_to_write, rez_quality_threshold)
+                    # with path_to_write.open("a", encoding="utf-8") as file_w:
+                    #     for key in rez_quality_threshold.keys():
+                    #         file_w.write(key+'\n')
+                    #         file_w.write(rez_quality_threshold[key][0]+'\n')
+                    #         file_w.write(seq_plus+'\n')
+                    #         file_w.write(rez_quality_threshold[key][1]+'\n')
                 else:
                     continue
     

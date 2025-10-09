@@ -78,6 +78,36 @@ def average_quality(read: tuple) -> int:
 
     return round(seq_score/len(read[0]))
 
+def read_seq_from_file(file_name: str) -> dict:
+    pass
+    
+
+def write_seq_to_fle(file_name: str, seq: dict, ) -> None:
+    '''
+    Writes given seq (dict) of special shape/form to a given file
+
+    Arguments:
+        seq: dict of a form {id: (seq_read, seq_quality)}
+        file_name: str of file name to write the dict content
+
+    Returns:
+        None
+        in the file with file_name four rows to be writed:
+        id
+        seq_read
+        +
+        seq_quality
+        
+
+    Raises:
+        exceptions if something went wrong
+    '''
+    with file_name.open("a", encoding="utf-8") as file_w:
+        for key in seq.keys():
+            file_w.write(key+'\n')
+            file_w.write(seq[key][0]+'\n')
+            file_w.write(seq['plus']+'\n')
+            file_w.write(seq[key][1]+'\n')
 
 if __name__ == "__main__":
     pass
