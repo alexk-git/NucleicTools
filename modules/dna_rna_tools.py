@@ -25,6 +25,8 @@
         ValueError: if wrong sequence
 '''
 
+compliments_dna = {"A": "T", "a": "t", "T": "A", "t": "a", "G": "C", "g": "c", "C": "G", "c": "g"}
+compliments_rna = {"A": "U", "a": "u", "U": "A", "u": "a", "G": "C", "g": "c", "C": "G", "c": "g"}
 
 def is_nucleic_acid(seq: str) -> bool:
     '''
@@ -99,49 +101,10 @@ def complement(seq: str) -> str:
     '''
     if not is_nucleic_acid(seq):
         raise ValueError(f"{seq} is not DNA or RNA sqeuence!")
-    rez = []
 
-    if is_dna(seq):
-        for n in seq:
-            match n:
-                case 'a':
-                    rez.append('t')
-                case 'A':
-                    rez.append('T')
-                case 't':
-                    rez.append('a')
-                case 'T':
-                    rez.append('A')
-                case 'c':
-                    rez.append('g')
-                case 'C':
-                    rez.append('G')
-                case 'g':
-                    rez.append('c')
-                case 'G':
-                    rez.append('C')
+    if is_dna(seq): return "".join([compliments_dna[n] for n in seq])
 
-    if is_rna(seq):
-        for n in seq:
-            match n:
-                case 'a':
-                    rez.append('u')
-                case 'A':
-                    rez.append('U')
-                case 'u':
-                    rez.append('a')
-                case 'U':
-                    rez.append('A')
-                case 'c':
-                    rez.append('g')
-                case 'C':
-                    rez.append('G')
-                case 'g':
-                    rez.append('c')
-                case 'G':
-                    rez.append('C')
-
-    return ''.join(rez)
+    if is_rna(seq): return "".join([compliments_rna[n] for n in seq])
 
 
 def reverse_complement(seq: str) -> str:
