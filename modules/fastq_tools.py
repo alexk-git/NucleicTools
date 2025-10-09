@@ -13,7 +13,7 @@
 '''
 
 from . import dna_rna_tools
-
+from sys import exit
 
 def nucl_count(posl: str, nucl: str) -> int:
     '''
@@ -79,7 +79,34 @@ def average_quality(read: tuple) -> int:
     return round(seq_score/len(read[0]))
 
 def read_seq_from_file(file_name: str) -> dict:
-    pass
+    '''
+    Get open file object, read from in a sequence result and make a dictionary of it.
+    Update the status of file context if needed.
+
+    Arguments:
+        file_name: opened file object for reading
+
+    Global variable:
+        status
+
+    Returns:
+        seq: dict of a form {id: (seq_read, seq_quality, seq_plus)}
+        
+    Raises:
+        exceptions if something went wrong
+    '''
+    global status
+    seq_id = file_name.readline()
+    if not seq_id:
+        status = False
+        return {}
+
+    else:
+        seq_id = seq_id.strip()
+        seq_seq = file_name.readline().strip()
+        seq_plus = file_name.readline().strip()
+        seq_qual = file_name.readline().strip()
+        return {seq_id: (seq_seq, seq_qual, seq_plus)}
     
 
 def write_seq_to_fle(file_name: str, seq: dict, ) -> None:
@@ -106,8 +133,10 @@ def write_seq_to_fle(file_name: str, seq: dict, ) -> None:
         for key in seq.keys():
             file_w.write(key+'\n')
             file_w.write(seq[key][0]+'\n')
-            file_w.write(seq['plus']+'\n')
+            file_w.write(seq[key][2]+'\n')
             file_w.write(seq[key][1]+'\n')
+
+    return None
 
 if __name__ == "__main__":
     pass

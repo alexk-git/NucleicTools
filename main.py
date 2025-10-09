@@ -83,65 +83,53 @@ def filter_fastq(input_fastq: str, output_fastq: str, gc_bounds: Union[int, tupl
         exceptions if something went wrong.
     '''
 
+    output_dir = Path("filtered")
+    output_dir.mkdir(exist_ok=True)
+
     path_to_write = Path("filtered", f"{output_fastq}")
     if path_to_write.is_file():
         is_overwtire = input(f"The file {path_to_write} already exists, want to overwrite it? Y/N")
         if is_overwtire in {'Y', 'y'}: path_to_write.unlink()
         else: exit()
+            
+    status = True
     
     with open(input_fastq, "r") as file:
-        while True:
-            seq_id = file.readline()
-            if not seq_id:
-                print(f"processing for {input_fastq} finished, filtration results in {path_to_write}")
+        while status:
+            seqs = modules.fastq_tools.read_seq_from_file(file)
+            if not status:
+                print(f"processing of the {input_fastq} is complete, filtering results are saved in {output_fastq}")
                 break
-            else:
-                seq_id = seq_id.strip()
-                seq_seq = file.readline().strip()
-                seq_plus = file.readline().strip()
-                seq_qual = file.readline().strip()
-                seqs = {seq_id: (seq_seq, seq_qual)}
-                #print(seqs)
+            
+            if len(seqs.keys()) == 0:
+                print(f"processing of the {input_fastq} is complete, filtering results are saved in {output_fastq}")
+                break
+            
 
-    
-                if not isinstance(seqs, dict): raise TypeError("seqs must be a dictionary")
-                if isinstance(gc_bounds, int): gc_bounds = (0, gc_bounds)
-                if isinstance(length_bounds, int): length_bounds = (0, length_bounds)
-            
-                rez_gc_bounds = {}
-            
-                for key in seqs.keys():
-                    #print(gc_bounds[0], seqs[key][0], modules.fastq_tools.gc_count(seqs[key][0]))
-                    if (gc_bounds[0] <= modules.fastq_tools.gc_count(seqs[key][0])) and (modules.fastq_tools.gc_count(seqs[key][0]) <= gc_bounds[1]):
-                        rez_gc_bounds[key] = seqs[key]
-            
-                rez_length_bounds = {}
-            
-                for key in rez_gc_bounds.keys():
-                    if (length_bounds[0] <= len(seqs[key][0])) and (len(seqs[key][0]) <= length_bounds[1]):
-                        rez_length_bounds[key] = rez_gc_bounds[key]
-            
-                rez_quality_threshold = {}
-            
-                for key in rez_length_bounds.keys():
-                    if (modules.fastq_tools.average_quality(seqs[key]) >= quality_threshold):
-                        rez_quality_threshold[key] = rez_length_bounds[key]
-            
-                output_dir = Path("filtered")
-                output_dir.mkdir(exist_ok=True)
+            if not isinstance(seqs, dict): raise TypeError("seqs must be a dictionary")
+            if isinstance(gc_bounds, int): gc_bounds = (0, gc_bounds)
+            if isinstance(length_bounds, int): length_bounds = (0, length_bounds)
+        
+            rez_gc_bounds = {}
+        
+            for key in seqs.keys():
+                if (gc_bounds[0] <= modules.fastq_tools.gc_count(seqs[key][0])) and (modules.fastq_tools.gc_count(seqs[key][0]) <= gc_bounds[1]):
+                    rez_gc_bounds[key] = seqs[key]
+        
+            rez_length_bounds = {}
+        
+            for key in rez_gc_bounds.keys():
+                if (length_bounds[0] <= len(seqs[key][0])) and (len(seqs[key][0]) <= length_bounds[1]):
+                    rez_length_bounds[key] = rez_gc_bounds[key]
+        
+            rez_quality_threshold = {}
+        
+            for key in rez_length_bounds.keys():
+                if (modules.fastq_tools.average_quality(seqs[key]) >= quality_threshold):
+                    rez_quality_threshold[key] = rez_length_bounds[key]
 
-                # print(rez_quality_threshold)
-                if len(rez_quality_threshold.keys())>0:
-                    rez_quality_threshold['plus'] = seq_plus
-                    modules.fastq_tools.write_seq_to_fle(path_to_write, rez_quality_threshold)
-                    # with path_to_write.open("a", encoding="utf-8") as file_w:
-                    #     for key in rez_quality_threshold.keys():
-                    #         file_w.write(key+'\n')
-                    #         file_w.write(rez_quality_threshold[key][0]+'\n')
-                    #         file_w.write(seq_plus+'\n')
-                    #         file_w.write(rez_quality_threshold[key][1]+'\n')
-                else:
-                    continue
+            if len(rez_quality_threshold.keys())>0: modules.fastq_tools.write_seq_to_fle(path_to_write, rez_quality_threshold)
+            else: continue
     
     return None
 
