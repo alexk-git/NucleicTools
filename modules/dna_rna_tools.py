@@ -27,6 +27,7 @@
 
 compliments_dna = {"A": "T", "a": "t", "T": "A", "t": "a", "G": "C", "g": "c", "C": "G", "c": "g"}
 compliments_rna = {"A": "U", "a": "u", "U": "A", "u": "a", "G": "C", "g": "c", "C": "G", "c": "g"}
+trinscribets = {"A": "A", "a": "a", "T": "U", "t": "u", "G": "G", "g": "g", "C": "C", "c": "c"}
 
 def is_nucleic_acid(seq: str) -> bool:
     '''
@@ -58,34 +59,8 @@ def transcribe(seq: str) -> str:
     '''
     Return transcribed RNA from DNA sequence.
     '''
-    if not is_dna(seq):
-        raise ValueError(f"{seq} is not DNA, can transcribe only DNA.")
-    rez = []
-    for n in seq:
-        match n:
-            case 'a':
-                rez.append('a')
-            case 'A':
-                rez.append('A')
-            case 't':
-                rez.append('u')
-            case 'T':
-                rez.append('U')
-            case 'c':
-                rez.append('c')
-            case 'C':
-                rez.append('C')
-            case 'g':
-                rez.append('g')
-            case 'G':
-                rez.append('G')
-            case 'u':
-                rez.append('t')
-            case 'U':
-                rez.append('T')
-            case _:
-                return "not dna or rna sequence"
-    return ''.join(rez)
+    if not is_dna(seq): raise ValueError(f"{seq} is not DNA, can transcribe only DNA.")
+    else: return "".join([trinscribets[n] for n in seq])
 
 
 def reverse(seq: str) -> str:
