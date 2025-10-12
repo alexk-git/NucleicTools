@@ -14,6 +14,7 @@
 
 from . import dna_rna_tools
 from sys import exit
+from typing import Union
 
 def nucl_count(posl: str, nucl: str) -> int:
     '''
@@ -137,6 +138,69 @@ def write_seq_to_fle(file_name: str, seq: dict, ) -> None:
             file_w.write(seq[key][1]+'\n')
 
     return None
+
+def write_genes_seq_to_fasta(genes_data: dict, output_file: str):
+    """
+    Writes genes to a FASTA file.
+
+    Arguments:
+        genes_data: dictionary with gene data
+        output_file: name of the output FASTA file
+
+    Returns:
+        None
+        
+    """
+    
+    with open(output_file, 'w', encoding='utf-8') as file:
+        for gene_num, gene_info in genes_data.items():
+            header = f">gene_{gene_num}"
+            if gene_info['gene']:
+                header += f"|name_{gene_info['gene']}"
+            
+            file.write(header + "\n")
+            file.write(gene_info['translation'] + "\n\n")
+            
+    return None
+
+def find_genes_with_neighbors(genes_dict: dict, genes: Union[int, tuple, list], n_before: int = 1, n_after: int = 1) -> dict:
+    """
+    Finds genes of interest and their neighbors in a dictionary.
+    
+    Arguments:
+        genes_dict: dictionary with genes {n: {'gene': name, 'translation': seq}}
+        genes: gene numbers to search (int, tuple, or list)
+        n_before: how many genes before the target gene to include
+        n_after: how many genes after the target gene to include
+    
+    Returns:
+        dict: dictionary with found genes and their neighbors
+        
+    """
+    rez = {}
+    
+    if isinstance(genes, int):
+        target_genes = [genes]
+    elif isinstance(genes, tuple):
+        target_genes = list(genes)
+    else:
+        target_genes = genes
+    
+    genes_to_include = set()
+    
+    for gene_num in target_genes:
+        if gene_num in genes_dict:
+            start = max(1, gene_num - n_before)
+            end = gene_num + n_after
+            
+            for i in range(start, end + 1):
+                if i in genes_dict:
+                    genes_to_include.add(i)
+    
+    for gene_num in sorted(genes_to_include):
+        rez[gene_num] = genes_dict[gene_num]
+    
+    return rez
 
 if __name__ == "__main__":
     pass
