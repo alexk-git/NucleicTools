@@ -163,12 +163,12 @@ def write_genes_seq_to_fasta(genes_data: dict, output_file: str):
             
     return None
 
-def find_genes_with_neighbors(genes_dict: dict, genes: Union[int, tuple, list], n_before: int = 1, n_after: int = 1) -> dict:
+def find_genes_with_neighbors(genes_all: dict, genes: Union[int, tuple, list], n_before: int = 1, n_after: int = 1) -> dict:
     """
     Finds genes of interest and their neighbors in a dictionary.
     
     Arguments:
-        genes_dict: dictionary with genes {n: {'gene': name, 'translation': seq}}
+        genes_dict: dictionary with genes {'gene_name': {'gene': gene_name, 'gene_count': number, 'translation': seq}}
         genes: gene numbers to search (int, tuple, or list)
         n_before: how many genes before the target gene to include
         n_after: how many genes after the target gene to include
@@ -177,29 +177,23 @@ def find_genes_with_neighbors(genes_dict: dict, genes: Union[int, tuple, list], 
         dict: dictionary with found genes and their neighbors
         
     """
+
+    if isinstance(genes, str):
+        genes = [genes]
+    
     rez = {}
+    genes_to_check = list(genes_all.keys())
     
-    if isinstance(genes, int):
-        target_genes = [genes]
-    elif isinstance(genes, tuple):
-        target_genes = list(genes)
-    else:
-        target_genes = genes
-    
-    genes_to_include = set()
-    
-    for gene_num in target_genes:
-        if gene_num in genes_dict:
-            start = max(1, gene_num - n_before)
-            end = gene_num + n_after
-            
-            for i in range(start, end + 1):
-                if i in genes_dict:
-                    genes_to_include.add(i)
-    
-    for gene_num in sorted(genes_to_include):
-        rez[gene_num] = genes_dict[gene_num]
-    
+    for gene in genes:
+        idx = genes_to_check.index(gene)
+        
+        left_end = max(idx - n_before, 0)
+        right_end = min(idx + n_after + 1, len(genes_to_check))
+        
+        for i in range(left_end, right_end):
+            key = genes_to_check[i]
+            rez[key] = genes_all[key]
+
     return rez
 
 if __name__ == "__main__":

@@ -91,7 +91,8 @@ def parse_blast_output(input_gbk: str, genes: Union[int, tuple, list], output_fa
             if line.startswith('     CDS'):
                 if in_cds and current_gene is not None and current_translation:
                     gene_count += 1
-                    genes_parsed[gene_count] = {
+                    genes_parsed[current_gene] = {
+                        'gene_count': gene_count,
                         'gene': current_gene,
                         'translation': current_translation
                     }
@@ -106,7 +107,8 @@ def parse_blast_output(input_gbk: str, genes: Union[int, tuple, list], output_fa
                 if line and not line.startswith('                     '):
                     if current_gene is not None and current_translation:
                         gene_count += 1
-                        genes_parsed[gene_count] = {
+                        genes_parsed[current_gene] = {
+                            'gene_count': gene_count,
                             'gene': current_gene,
                             'translation': current_translation
                         }
@@ -150,7 +152,8 @@ def parse_blast_output(input_gbk: str, genes: Union[int, tuple, list], output_fa
 
     if in_cds and current_gene is not None and current_translation:
         gene_count += 1
-        genes_parsed[gene_count] = {
+        genes_parsed[current_gene] = {
+            'gene_count': gene_count,
             'gene': current_gene,
             'translation': current_translation
         }
@@ -162,9 +165,11 @@ def parse_blast_output(input_gbk: str, genes: Union[int, tuple, list], output_fa
     with open(f'{input_gbk.split(".")[0]}.json', 'w', encoding='utf-8') as f:
         json.dump(genes_parsed, f, ensure_ascii=False, indent=4)
 
+    print(f'saved human readable version of {input_gbk} in {input_gbk.split(".")[0]}.json')
+
     genes_of_interests = modules.fastq_tools.find_genes_with_neighbors(genes_parsed, genes, n_before, n_after)
 
-    modules.fastq_tools.write_genes_seq_to_fasta(genes_of_interests, output_fasta)
+    modules.fastq_tools.write_genes_seq_to_fasta(genes_of_interests, path_to_write)
 
     return None
 
