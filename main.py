@@ -101,14 +101,7 @@ class NucleicAcidSequence(BiologicalSequence):
         Returns the number (amount) of nucleotide (nucl) in a sequence (posl)
         '''
 
-        posl = self._sequence.lower()
-        nucl = nucl.lower()
-        nc = 0
-        for i in range(len(posl)):
-            if posl[i] == nucl:
-                nc += 1
-
-        return nc
+        return self._sequence.lower().count(nucl.lower())
 
 
     def gc_count(self) -> float:
@@ -125,10 +118,7 @@ class NucleicAcidSequence(BiologicalSequence):
             exceptions if something went wrong
         '''
 
-        g_count = self.nucl_count('G')
-        c_count = self.nucl_count('C')
-
-        return (g_count + c_count)*100/len(self._sequence)
+        return gc_fraction(self._sequence)
 
 
 class RNASequence(NucleicAcidSequence):
@@ -205,117 +195,6 @@ class AminoAcidSequence(BiologicalSequence):
 
 
 
-
-def average_quality(read: tuple) -> int:
-    '''
-    Return average quality (in phred33) of the read
-
-    Arguments:
-        read: string of nucleotides
-
-    Returns:
-        int number: quality number in phred33 score
-
-        Symbol ! " # $ % & ' ( ) * +  ,  -  .  /  0  1  2  3  4  5  6  7  8  9  :  ;  <  =  >  ?  @  A  B  C  D  E  F  G  H  I
-         Score 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40
-
-    Raises:
-        exceptions if something went wrong
-    '''
-
-    scores = {'!': '0', '"': '1', '#': '2', '$': '3', '%': '4', '&': '5', "'": '6', '(': '7', ')': '8', '*': '9', '+': '10', ',': '11', '-': '12', '.': '13', '/': '14', '0': '15', '1': '16', '2': '17', '3': '18', '4': '19', '5': '20', '6': '21', '7': '22', '8': '23', '9': '24', ':': '25', ';': '26', '<': '27', '=': '28', '>': '29', '?': '30', '@': '31', 'A': '32', 'B': '33', 'C': '34', 'D': '35', 'E': '36', 'F': '37', 'G': '38', 'H': '39', 'I': '40'}
-
-    seq_score = 0
-
-    for i in range(len(read[0])):
-        seq_score += int(scores[read[1][i]])
-
-    return round(seq_score/len(read[0]))
-
-def read_seq_from_file(file_name: str) -> dict:
-    '''
-    Get open file object, read from in a sequence result and make a dictionary of it.
-    Update the status of file context if needed.
-
-    Arguments:
-        file_name: opened file object for reading
-
-    Global variable:
-        status
-
-    Returns:
-        seq: dict of a form {id: (seq_read, seq_quality, seq_plus)}
-
-    Raises:
-        exceptions if something went wrong
-    '''
-    global status
-    seq_id = file_name.readline()
-    if not seq_id:
-        status = False
-        return {}
-
-    else:
-        seq_id = seq_id.strip()
-        seq_seq = file_name.readline().strip()
-        seq_plus = file_name.readline().strip()
-        seq_qual = file_name.readline().strip()
-        return {seq_id: (seq_seq, seq_qual, seq_plus)}
-
-
-def write_seq_to_fle(file_name: str, seq: dict, ) -> None:
-    '''
-    Writes given seq (dict) of special shape/form to a given file
-
-    Arguments:
-        seq: dict of a form {id: (seq_read, seq_quality)}
-        file_name: str of file name to write the dict content
-
-    Returns:
-        None
-        in the file with file_name four rows to be writed:
-        id
-        seq_read
-        +
-        seq_quality
-
-
-    Raises:
-        exceptions if something went wrong
-    '''
-    with file_name.open("a", encoding="utf-8") as file_w:
-        for key in seq.keys():
-            file_w.write(key+'\n')
-            file_w.write(seq[key][0]+'\n')
-            file_w.write(seq[key][2]+'\n')
-            file_w.write(seq[key][1]+'\n')
-
-    return None
-
-def write_genes_seq_to_fasta(genes_data: dict, output_file: str):
-    """
-    Writes genes to a FASTA file.
-
-    Arguments:
-        genes_data: dictionary with gene data
-        output_file: name of the output FASTA file
-
-    Returns:
-        None
-
-    """
-
-    with open(output_file, 'w', encoding='utf-8') as file:
-        for gene_num, gene_info in genes_data.items():
-            header = f">gene_{gene_num}"
-            if gene_info['gene']:
-                header += f"|name_{gene_info['gene']}"
-
-            file.write(header + "\n")
-            file.write(gene_info['translation'] + "\n\n")
-
-    return None
-
 def find_genes_with_neighbors(genes_all: dict, genes: Union[int, tuple, list], n_before: int = 1, n_after: int = 1) -> dict:
     """
     Finds genes of interest and their neighbors in a dictionary.
@@ -349,8 +228,19 @@ def find_genes_with_neighbors(genes_all: dict, genes: Union[int, tuple, list], n
 
     return rez
 
+from pathlib import Path
+from typing import Union, Optional
+from Bio import SeqIO
+from Bio.SeqUtils import gc_fraction
+from Bio.SeqRecord import SeqRecord
 
-def filter_fastq(input_fastq: str, output_fastq: str, gc_bounds: Union[int, tuple] = (0, 100), length_bounds: Union[int, tuple] = (0, 2**32), quality_threshold: int = 0) -> None:
+def filter_fastq(
+    input_fastq: str,
+    output_fastq: str,
+    gc_bounds: Union[int, tuple] = (0, 100),
+    length_bounds: Union[int, tuple] = (0, 2**32),
+    quality_threshold: int = 0
+) -> None:
     '''
     A function working with fastq sequences.
     All bounds is included.
@@ -375,55 +265,71 @@ def filter_fastq(input_fastq: str, output_fastq: str, gc_bounds: Union[int, tupl
         exceptions if something went wrong.
     '''
 
+    # bound preprocessing
+    if isinstance(gc_bounds, int):
+        gc_bounds = (0, gc_bounds)
+    if isinstance(length_bounds, int):
+        length_bounds = (0, length_bounds)
+
+    # converting percentages to fractions
+    # because gc_fraction (returns 0-1)
+    gc_min, gc_max = gc_bounds[0] / 100.0, gc_bounds[1] / 100.0
+
+    # creating output directory
     output_dir = Path("filtered")
     output_dir.mkdir(exist_ok=True)
 
-    path_to_write = Path("filtered", f"{output_fastq}")
-    if path_to_write.is_file():
-        is_overwtire = input(f"The file {path_to_write} already exists, want to overwrite it? Y/N")
-        if is_overwtire in {'Y', 'y'}: path_to_write.unlink()
-        else: exit()
-            
-    status = True
-    
-    with open(input_fastq, "r") as file:
-        while status:
-            seqs = modules.fastq_tools.read_seq_from_file(file)
-            if not status:
-                print(f"processing of the {input_fastq} is complete, filtering results are saved in {output_fastq}")
-                break
-            
-            if len(seqs.keys()) == 0:
-                print(f"processing of the {input_fastq} is complete, filtering results are saved in {output_fastq}")
-                break
-            
+    output_path = output_dir / output_fastq
 
-            if not isinstance(seqs, dict): raise TypeError("seqs must be a dictionary")
-            if isinstance(gc_bounds, int): gc_bounds = (0, gc_bounds)
-            if isinstance(length_bounds, int): length_bounds = (0, length_bounds)
-        
-            rez_gc_bounds = {}
-        
-            for key in seqs.keys():
-                if (gc_bounds[0] <= modules.fastq_tools.gc_count(seqs[key][0])) and (modules.fastq_tools.gc_count(seqs[key][0]) <= gc_bounds[1]):
-                    rez_gc_bounds[key] = seqs[key]
-        
-            rez_length_bounds = {}
-        
-            for key in rez_gc_bounds.keys():
-                if (length_bounds[0] <= len(seqs[key][0])) and (len(seqs[key][0]) <= length_bounds[1]):
-                    rez_length_bounds[key] = rez_gc_bounds[key]
-        
-            rez_quality_threshold = {}
-        
-            for key in rez_length_bounds.keys():
-                if (modules.fastq_tools.average_quality(seqs[key]) >= quality_threshold):
-                    rez_quality_threshold[key] = rez_length_bounds[key]
+    # checking if file exists
+          if output_path.exists():
+        response = input(f"File {output_path} exists. Overwrite? (Y/N): ")
+        if response.lower() != 'y':
+            print("Operation cancelled.")
+            return
+        output_path.unlink()
 
-            if len(rez_quality_threshold.keys())>0: modules.fastq_tools.write_seq_to_fle(path_to_write, rez_quality_threshold)
-            else: continue
-    
-    return None
+    # list of records that have passed the filter for answer
+    passed_records = []
+
+    try:
+        # reading FASTQ-file with SeqIO
+        for record in SeqIO.parse(input_fastq, "fastq"):
+            sequence = str(record.seq)
+            length = len(sequence)
+
+            # length filter
+            if not (length_bounds[0] <= length <= length_bounds[1]):
+                continue
+
+            # gc-count filter
+            gc_content = gc_fraction(sequence)
+            if not (gc_min <= gc_content <= gc_max):
+                continue
+
+            # quality filter
+            if 'phred_quality' in record.letter_annotations:
+                avg_quality = sum(record.letter_annotations['phred_quality']) / length
+                if avg_quality < quality_threshold:
+                    continue
+            else:
+                # check threshold > 0 if no quality info
+                if quality_threshold > 0:
+                    continue
+
+            # add to answer
+            passed_records.append(record)
+
+        # write filtered to file
+        if passed_records:
+            count = SeqIO.write(passed_records, output_path, "fastq")
+            print(f"Filtered {count} sequences saved to {output_path}")
+        else:
+            print("No sequences passed the filters.")
+            output_path.touch()  # creating empty file
+
+    except Exception as e:
+        raise RuntimeError(f"Error processing FASTQ file: {e}")
 
 
 if __name__ == "__main__":
