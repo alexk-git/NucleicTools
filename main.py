@@ -1,11 +1,12 @@
 from typing import Union
 from os import path
-from sys import exit
 from pathlib import Path
-import modules.fastq_tools
-
-
+from typing import Union, Optional
+from Bio import SeqIO
+from Bio.SeqUtils import gc_fraction
+from Bio.SeqRecord import SeqRecord
 from abc import ABC, abstractmethod
+
 
 '''
     Specialized classes for processing DNA/RNA sequences
