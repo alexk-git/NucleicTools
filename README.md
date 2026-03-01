@@ -1,38 +1,73 @@
 # NucleicTools
 Tools for working with nucleotides and their sequences.
 
-## Modules
+# Modules
 
-### DNA/RNA Tools
+## Core Classes
 
-The aggregation function run_dna_rna_tools processes DNA or RNA sequences with various operations.
+### BiologicalSequence (ABC)
+Abstract base class defining the interface for all biological sequences:
 
-The aggregation function `run_dna_rna_tools` accepts an arbitrary number of arguments containing DNA or RNA sequences (str), as well as the name of the procedure to be executed (this is always the last argument; see the usage example), performs the specified operation on all the passed sequences and returns the result.
+* `__len__` - length of sequence
+* `__getitem__` - indexing and slicing
+* `__str__`, `__repr__` - pretty printing
+* `_validate_alphabet` - abstract method for alphabet validation
 
-The following procedres are available:
+### NucleicAcidSequence (inherits from BiologicalSequence)
+Base class for DNA and RNA sequences with:
 
-`is_nucleic_acid` - returns a Boolean result of a sequence check
+* `complement()` - returns complementary sequence
+* `reverse()` - returns reversed sequence
+* `reverse_complement()` - returns reverse complement
+* `gc_content()` - calculates GC-content in percent
+* `nucl_count()` - counts specific nucleotides
+* Automatic DNA/RNA type detection
 
-`is_rna` - returns a Boolean result of a RNA-sequence check
+### DNASequence (inherits from NucleicAcidSequence)
+* `transcribe()` - transcribes DNA to RNA (returns RNASequence object)
+* DNA-specific alphabet validation
 
-`is_dna` - returns a Boolean result of a DNA-sequence check
+### RNASequence (inherits from NucleicAcidSequence)
+* RNA-specific alphabet validation
 
-`transcribe` - returns the transcribed sequence
+### AminoAcidSequence (inherits from BiologicalSequence)
+* `molecular_weight()` - calculates protein molecular weight
+* Amino acid alphabet validation
 
-`reverse` - returns the reversed sequence
+## DNA/RNA Tools
+The aggregation function `run_dna_rna_tools` processes DNA or RNA sequences with various operations. It accepts an arbitrary number of arguments containing DNA or RNA sequences (str), as well as the name of the procedure to be executed (this is always the last argument), performs the specified operation on all the passed sequences and returns the result.
 
-`complement` - returns the complementary sequence
+Available procedures:
 
-`reverse_complement` - returns the reverse complementary sequence
+* `is_nucleic_acid` - checks if sequence is DNA or RNA
+* `is_rna` - checks if sequence is RNA
+* `is_dna` - checks if sequence is DNA
+* `transcribe` - transcribes DNA to RNA
+* `reverse` - reverses sequence
+* `complement` - returns complementary sequence
+* `reverse_complement` - returns reverse complement
+
+### Usage examples
+```python
+# Class-based approach
+dna = DNASequence("ATG")
+rna = dna.transcribe()  # Returns RNASequence("AUG")
+print(dna.complement())  # TAC
+print(dna.gc_content())  # 33.33
+
+# Function-based approach
+run_dna_rna_tools('ATG', 'transcribe')  # 'AUG'
+run_dna_rna_tools('ATG', 'aT', 'reverse')  # ['GTA', 'Ta']
 
 #### run_dna_rna_tools usage example
 ```
-run_dna_rna_tools('TTUU', 'is_nucleic_acid') # False !!
-run_dna_rna_tools('ATG', 'transcribe') # 'AUG'
-run_dna_rna_tools('ATG', 'reverse') # 'GTA'
-run_dna_rna_tools('AtG', 'complement') # 'TaC'
-run_dna_rna_tools('ATg', 'reverse_complement') # 'cAT'
-run_dna_rna_tools('ATG', 'aT', 'reverse') # ['GTA', 'Ta']
+filter_fastq(
+input_fastq="reads.fastq",
+output_fastq="filtered_reads.fastq",
+gc_bounds=(30, 70),        # 30-70% GC content
+length_bounds=(50, 500),   # 50-500 bp length
+quality_threshold=30       # Minimum average quality Phred30
+)
 ```
 
 ### FASTQ Filtering
@@ -83,6 +118,10 @@ Functions raise appropriate exceptions for invalid inputs.
 
 ## Requirements:
 Python 3.11+
+
+biopython
+
+pathlib
 
 ## License
 MIT License - see [LICENSE](LICENSE) file for details.
