@@ -172,14 +172,3 @@ def parse_blast_output(input_gbk: str, genes: Union[int, tuple, list], output_fa
     modules.fastq_tools.write_genes_seq_to_fasta(genes_of_interests, path_to_write)
 
     return None
-
-    
-
-
-
-
-
-
-
-
-    
