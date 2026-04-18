@@ -58,6 +58,7 @@ print(dna.gc_content())  # 33.33
 # Function-based approach
 run_dna_rna_tools('ATG', 'transcribe')  # 'AUG'
 run_dna_rna_tools('ATG', 'aT', 'reverse')  # ['GTA', 'Ta']
+```
 
 #### run_dna_rna_tools usage example
 ```
