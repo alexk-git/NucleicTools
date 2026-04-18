@@ -66,6 +66,18 @@ fastq_dict = {
 filter_fastq(fastq_dict, 100, 9, 37)
 ```
 
+### bio_files_processor
+
+#### convert_multiline_fasta_to_oneline: 
+    reads a fasta file supplied as input,
+    in which the sequence (DNA/RNA/protein/etc.) can be split into several lines,
+    and then saves it into a new fasta file in which each sequence fits one line.
+
+#### select_genes_from_gbk_to_fasta:
+    function receives a GBK-file as input, 
+    extracts the specified number of genes before and after each gene of interest (gene), 
+    and saves their protein sequence (translation) to a fasta file.
+
 ### Error Handling
 Functions raise appropriate exceptions for invalid inputs.
 
