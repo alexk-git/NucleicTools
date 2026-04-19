@@ -41,3 +41,17 @@ class TestDNASequence:
         """Ошибка при создании ДНК с неверными символами"""
         with pytest.raises(ValueError, match="is not DNA"):
             DNASequence("ATGCX")
+
+class TestAminoAcidSequence:
+    """Тесты для белковых последовательностей"""
+    
+    def test_molecular_weight(self):
+        """molecular_weight() правильно считает массу"""
+        protein = AminoAcidSequence("MA")
+        # M(149.21) + A(89.09) - 18.02 = 220.28
+        assert abs(protein.molecular_weight() - 220.28) < 0.01
+    
+    def test_invalid_amino_acid_raises_error(self):
+        """Ошибка при неверной аминокислоте"""
+        with pytest.raises(ValueError, match="is not amino-acid"):
+            AminoAcidSequence("MAZ")
