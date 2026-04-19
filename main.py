@@ -258,6 +258,7 @@ def filter_fastq(
     # checking if file exists
     if output_path.exists():
         if not overwrite:
+            logger.error(f"File {output_path} already exists and overwrite is False")
             raise FileExistsError(f"File {output_path} already exists. Use overwrite=True to overwrite.")
         output_path.unlink()
 
@@ -305,6 +306,7 @@ def filter_fastq(
             output_path.touch()  # creating empty file
 
     except Exception as e:
+        logger.error(f"Error processing FASTQ file: {e}")
         raise RuntimeError(f"Error processing FASTQ file: {e}")
 
 
