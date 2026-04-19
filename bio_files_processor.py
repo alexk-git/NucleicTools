@@ -14,7 +14,8 @@
 from pathlib import Path
 from typing import Union
 import json
-import modules.fastq_tools
+#import modules.fastq_tools
+from main import find_genes_with_neighbors
 
 def convert_multiline_fasta_to_oneline(input_fasta: str) -> None:
     '''
