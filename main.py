@@ -263,6 +263,9 @@ def filter_fastq(
         exceptions if something went wrong.
     '''
 
+    logger.info(f"Starting filter: input={input_fastq}, output={output_fastq}")
+    logger.info(f"Parameters: gc_bounds={gc_bounds}, length_bounds={length_bounds}, quality_threshold={quality_threshold}")
+
     # bound preprocessing
     if isinstance(gc_bounds, int):
         gc_bounds = (0, gc_bounds)
@@ -317,6 +320,8 @@ def filter_fastq(
 
             # add to answer
             passed_records.append(record)
+
+        logger.info(f"Processed {total_records} records, filtered {len(passed_records)}")
 
         # write filtered to file
         if passed_records:
