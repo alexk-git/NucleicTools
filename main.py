@@ -295,7 +295,9 @@ def filter_fastq(
 
     try:
         # reading FASTQ-file with SeqIO
+        total_records = 0
         for record in SeqIO.parse(input_fastq, "fastq"):
+            total_records += 1
             sequence = str(record.seq)
             length = len(sequence)
 

@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Union
 import json
 #import modules.fastq_tools
-from main import find_genes_with_neighbors
+from main import find_genes_with_neighbors, write_genes_seq_to_fasta
 
 def convert_multiline_fasta_to_oneline(input_fasta: str) -> None:
     '''
@@ -168,8 +168,8 @@ def parse_blast_output(input_gbk: str, genes: Union[int, tuple, list], output_fa
 
     print(f'saved human readable version of {input_gbk} in {input_gbk.split(".")[0]}.json')
 
-    genes_of_interests = modules.fastq_tools.find_genes_with_neighbors(genes_parsed, genes, n_before, n_after)
+    genes_of_interests = find_genes_with_neighbors(genes_parsed, genes, n_before, n_after)
 
-    modules.fastq_tools.write_genes_seq_to_fasta(genes_of_interests, path_to_write)
+    write_genes_seq_to_fasta(genes_of_interests, path_to_write)
 
     return None
