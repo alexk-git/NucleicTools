@@ -6,7 +6,9 @@ from Bio import SeqIO
 from Bio.SeqUtils import gc_fraction
 from Bio.SeqRecord import SeqRecord
 from abc import ABC, abstractmethod
+from logger_config import setup_logger
 
+logger = setup_logger(__name__)
 
 '''
     Specialized classes for processing DNA/RNA sequences
@@ -229,11 +231,6 @@ def find_genes_with_neighbors(genes_all: dict, genes: Union[int, tuple, list], n
 
     return rez
 
-from pathlib import Path
-from typing import Union, Optional
-from Bio import SeqIO
-from Bio.SeqUtils import gc_fraction
-from Bio.SeqRecord import SeqRecord
 
 def filter_fastq(
     input_fastq: str,
