@@ -174,39 +174,6 @@ class AminoAcidSequence(BiologicalSequence):
         return weight
 
 
-def find_genes_with_neighbors(genes_all: dict, genes: Union[int, tuple, list], n_before: int = 1, n_after: int = 1) -> dict:
-    """
-    Finds genes of interest and their neighbors in a dictionary.
-
-    Arguments:
-        genes_all: dictionary with genes {'gene_name': {'gene': gene_name, 'gene_count': number, 'translation': seq}}
-        genes: gene numbers to search (int, tuple, or list)
-        n_before: how many genes before the target gene to include
-        n_after: how many genes after the target gene to include
-
-    Returns:
-        dict: dictionary with found genes and their neighbors
-    """
-
-    if isinstance(genes, str):
-        genes = [genes]
-
-    rez = {}
-    genes_to_check = list(genes_all.keys())
-
-    for gene in genes:
-        idx = genes_to_check.index(gene)
-
-        left_end = max(idx - n_before, 0)
-        right_end = min(idx + n_after + 1, len(genes_to_check))
-
-        for i in range(left_end, right_end):
-            key = genes_to_check[i]
-            rez[key] = genes_all[key]
-
-    return rez
-
-
 def filter_fastq(
     input_fastq: str,
     output_fastq: str,
