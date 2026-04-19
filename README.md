@@ -95,10 +95,35 @@ Receives a GBK file as input, extracts genes and their neighbors, and saves prot
 Finds genes of interest and their neighbors in a gene dictionary.
 
 ```python
-from main import find_genes_with_neighbors
+from bio_files_processor import find_genes_with_neighbors
 
 result = find_genes_with_neighbors(genes_dict, ["geneA", "geneB"], n_before=2, n_after=2)
 ```
+
+## Command-Line Interface
+
+The project includes `nucleic_tools_cli.py` for running tools from the command line.
+
+### Filter FASTQ sequences
+
+```bash
+python nucleic_tools_cli.py filter --input reads.fastq --output filtered.fastq --gc-bounds 30 70 --quality-threshold 30 --overwrite
+```
+
+### Convert multiline FASTA to oneline
+
+```bash
+python nucleic_tools_cli.py convert --input sequences.fasta
+```
+
+### Help
+
+```bash
+python nucleic_tools_cli.py --help
+python nucleic_tools_cli.py filter --help
+```
+
+To make the script executable: `chmod +x nucleic_tools_cli.py`
 
 ## Logging
 
