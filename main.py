@@ -70,7 +70,7 @@ class NucleicAcidSequence(BiologicalSequence):
             raise ValueError(f"{self._sequence} is not nucleic sequence.")
 
 
-    def complement(self) -> NucleicAcidSequence:
+    def complement(self) -> 'NucleicAcidSequence':
         '''
         Return complimented sequence.
         '''
@@ -83,14 +83,14 @@ class NucleicAcidSequence(BiologicalSequence):
             return self.__class__("".join([self._compliments_rna[n] for n in self._sequence]))
 
 
-    def reverse(self) -> NucleicAcidSequence:
+    def reverse(self) -> 'NucleicAcidSequence':
         '''
         Return reversed sequence.
         '''
         return self.__class__(self._sequence[::-1])
 
 
-    def reverse_complement(self) -> NucleicAcidSequence:
+    def reverse_complement(self) -> 'NucleicAcidSequence':
         '''
         Return reversed complimented sequence.
         '''
@@ -283,7 +283,7 @@ def filter_fastq(
     output_path = output_dir / output_fastq
 
     # checking if file exists
-          if output_path.exists():
+    if output_path.exists():
         response = input(f"File {output_path} exists. Overwrite? (Y/N): ")
         if response.lower() != 'y':
             print("Operation cancelled.")

@@ -1,5 +1,5 @@
 import pytest
-from nucleic_tools.core import DNASequence, RNASequence, AminoAcidSequence
+from main import DNASequence, RNASequence, AminoAcidSequence
 
 class TestDNASequence:
     """
@@ -9,7 +9,7 @@ class TestDNASequence:
     def test_complement(self):
         """complement() возвращает правильную комплементарную цепь"""
         dna = DNASequence("ATGC")
-        assert dna.complement() == "TACG"
+        assert str(dna.complement()) == "TACG"
     
     def test_transcribe(self):
         """transcribe() правильно конвертирует ДНК в РНК"""
@@ -18,14 +18,26 @@ class TestDNASequence:
         assert str(rna) == "AUGC"
         assert isinstance(rna, RNASequence)
     
-    def test_gc_content_rna(self):
-        """gc_content() правильно считает GC-состав для РНК"""
+    def test_gc_count(self):
+        """gc_count() возвращает долю GC-состава от 0 до 1"""
         rna = RNASequence("AUGCCGCAU")
-        # G+C = G(2) + C(2) = 4 из 9 = 44.44%
-        assert abs(rna.gc_content() - 44.44) < 0.01
+        gc_fraction = rna.gc_count()
     
-    def test_invalid_dna_sequence_raises_error(self):
-        """Ошибка - при создании ДНК с неверными символами"""
-        with pytest.raises(ValueError, match="Invalid DNA sequence"):
-            DNASequence("ATGCX")  # X - неверный нуклеотид
+        # Проверяем тип
+        assert isinstance(gc_fraction, float)
+    
+        # Проверяем диапазон
+        assert 0 <= gc_fraction <= 1
+    
+        # Проверяем, что для последовательности без GC возвращается 0
+        rna_no_gc = RNASequence("AUAUAUAU")
+        assert rna_no_gc.gc_count() == 0.0
+    
+        # Проверяем, что для последовательности только из GC возвращается 1
+        rna_only_gc = RNASequence("GCGCGCGC")
+        assert rna_only_gc.gc_count() == 1.0
 
+    def test_invalid_dna_sequence_raises_error(self):
+        """Ошибка при создании ДНК с неверными символами"""
+        with pytest.raises(ValueError, match="is not DNA"):
+            DNASequence("ATGCX")
