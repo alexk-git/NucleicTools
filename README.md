@@ -1,128 +1,146 @@
 # NucleicTools
 Tools for working with nucleotides and their sequences.
 
-# Modules
-
 ## Core Classes
 
 ### BiologicalSequence (ABC)
 Abstract base class defining the interface for all biological sequences:
 
-* `__len__` - length of sequence
-* `__getitem__` - indexing and slicing
-* `__str__`, `__repr__` - pretty printing
-* `_validate_alphabet` - abstract method for alphabet validation
+- `__len__`  length of sequence
+- `__getitem__`  indexing and slicing
+- `__str__`, `__repr__`  string representation
+- `__iter__`  iteration over sequence
+- `validate_alphabet()`  abstract method for alphabet validation
 
 ### NucleicAcidSequence (inherits from BiologicalSequence)
-Base class for DNA and RNA sequences with:
+Base class for DNA and RNA sequences. The `_complement_map` attribute must be defined in subclasses.
 
-* `complement()` - returns complementary sequence
-* `reverse()` - returns reversed sequence
-* `reverse_complement()` - returns reverse complement
-* `gc_content()` - calculates GC-content in percent
-* `nucl_count()` - counts specific nucleotides
-* Automatic DNA/RNA type detection
+- `complement()`  returns complementary sequence (raises `NotImplementedError` if called on base class directly)
+- `reverse()`  returns reversed sequence
+- `reverse_complement()`  returns reverse complement
+- `gc_count()`  calculates GC-content as a fraction (0 to 1)
+- `nucl_count(nucl)`  counts occurrences of a specific nucleotide
 
 ### DNASequence (inherits from NucleicAcidSequence)
-* `transcribe()` - transcribes DNA to RNA (returns RNASequence object)
-* DNA-specific alphabet validation
+- `transcribe()`  transcribes DNA to RNA (returns `RNASequence`)
+- DNA-specific alphabet validation (A, T, G, C)
 
 ### RNASequence (inherits from NucleicAcidSequence)
-* RNA-specific alphabet validation
+- RNA-specific alphabet validation (A, U, G, C)
 
 ### AminoAcidSequence (inherits from BiologicalSequence)
-* `molecular_weight()` - calculates protein molecular weight
-* Amino acid alphabet validation
-
-## DNA/RNA Tools
-The aggregation function `run_dna_rna_tools` processes DNA or RNA sequences with various operations. It accepts an arbitrary number of arguments containing DNA or RNA sequences (str), as well as the name of the procedure to be executed (this is always the last argument), performs the specified operation on all the passed sequences and returns the result.
-
-Available procedures:
-
-* `is_nucleic_acid` - checks if sequence is DNA or RNA
-* `is_rna` - checks if sequence is RNA
-* `is_dna` - checks if sequence is DNA
-* `transcribe` - transcribes DNA to RNA
-* `reverse` - reverses sequence
-* `complement` - returns complementary sequence
-* `reverse_complement` - returns reverse complement
+- `molecular_weight()`  calculates protein molecular weight
+- Amino acid alphabet validation (20 standard amino acids)
 
 ### Usage examples
+
 ```python
-# Class-based approach
-dna = DNASequence("ATG")
-rna = dna.transcribe()  # Returns RNASequence("AUG")
-print(dna.complement())  # TAC
-print(dna.gc_content())  # 33.33
+from main import DNASequence, RNASequence, AminoAcidSequence
 
-# Function-based approach
-run_dna_rna_tools('ATG', 'transcribe')  # 'AUG'
-run_dna_rna_tools('ATG', 'aT', 'reverse')  # ['GTA', 'Ta']
+# DNA
+dna = DNASequence("ATGC")
+print(dna.complement())          # TACG
+print(dna.reverse_complement())  # GCAT
+print(dna.gc_count())            # 0.5
+rna = dna.transcribe()           # RNASequence("AUGC")
+
+# RNA
+rna = RNASequence("AUGC")
+print(rna.complement())          # UACG
+
+# Protein
+protein = AminoAcidSequence("MA")
+print(protein.molecular_weight())  # 220.28
 ```
 
-#### run_dna_rna_tools usage example
-```
+## FASTQ Filtering
+
+The function `filter_fastq` reads a FASTQ file, applies filters, and writes passing sequences to an output file in the `filtered/` directory.
+
+### Arguments
+
+- `input_fastq`  path to input FASTQ file
+- `output_fastq`  output file name (saved in `filtered/` directory)
+- `gc_bounds`  GC-content interval in percent, default `(0, 100)`. A single number is treated as upper bound.
+- `length_bounds`  sequence length interval, default `(0, 2**32)`. A single number is treated as upper bound.
+- `quality_threshold`  minimum average read quality (Phred33), default `0`
+- `overwrite`  if `True`, overwrite existing output file, default `False`
+
+All bounds are inclusive.
+
+### Usage example
+
+```python
+from main import filter_fastq
+
 filter_fastq(
-input_fastq="reads.fastq",
-output_fastq="filtered_reads.fastq",
-gc_bounds=(30, 70),        # 30-70% GC content
-length_bounds=(50, 500),   # 50-500 bp length
-quality_threshold=30       # Minimum average quality Phred30
+    input_fastq="reads.fastq",
+    output_fastq="filtered_reads.fastq",
+    gc_bounds=(30, 70),
+    length_bounds=(50, 500),
+    quality_threshold=30,
+    overwrite=True
 )
 ```
 
-### FASTQ Filtering
+## bio_files_processor
 
-The filtration function `filter_fastq` accepts four arguments (seqs, gc_bounds, length_bounds, quality_threshold) and returns a dictionary similar to the input one, but consisting only of those sequences that satisfy all filtering conditions.
+### convert_multiline_fasta_to_oneline
+Reads a FASTA file where sequences may be split across multiple lines and saves a new FASTA file with each sequence on a single line.
 
-`seqs` is a dictionary of fastq sequences: key is a string name of the sequence, the value is a tuple of two strings: the sequence and the quality in phred33 scale.
+### parse_blast_output
+Receives a GBK file as input, extracts genes and their neighbors, and saves protein sequences (translations) to a FASTA file.
 
-`gc_bounds` - the GC-content interval (in percent), by default is (0, 100). If a single number is passed as an argument, it is considered to be the upper limit.
+### find_genes_with_neighbors
+Finds genes of interest and their neighbors in a gene dictionary.
 
-`length_bounds` - the length interval, by default is (0, 2**32).
+```python
+from bio_files_processor import find_genes_with_neighbors
 
-`quality_threshold` - the average read quality threshold for filtering; by default, it is 0 (phred33 scale).
-
-#### filter_fastq usage example
-
-```
-fastq_dict = {
-    "read_1": ("ATCGATCGAT", "IIIIIIIIII"),
-    "read_2": ("GGCCGGCCGG", "=;@B??@<>@"),
-    "read_3": ("TTTTAAAAAA", "HHHHHHHHHH"),
-    "read_4": ("ACGTACGTAC", "FFFFFFFFF#"),
-    "read_5": ("GGGGGGGGGG", "GFFCFEEEFF"),
-    "read_6": ("ATATATATAT", "EEEEEEEEEE"),
-    "read_7": ("CGCGCGCGCG", "GGGGGGGGGG"),
-    "read_8": ("AAAAAAAAAA", "DDDDDDDDDD"),
-    "read_9": ("TAGCTAGCGA", "IIIIIIIIII"),
-    "read_10": ("CCCCCCCCCC", "D@EDEFFB=D")
-}
-
-filter_fastq(fastq_dict, 100, 9, 37)
+result = find_genes_with_neighbors(genes_dict, ["geneA", "geneB"], n_before=2, n_after=2)
 ```
 
-### bio_files_processor
+## Command-Line Interface
 
-#### convert_multiline_fasta_to_oneline: 
-    reads a fasta file supplied as input,
-    in which the sequence (DNA/RNA/protein/etc.) can be split into several lines,
-    and then saves it into a new fasta file in which each sequence fits one line.
+The project includes `nucleic_tools_cli.py` for running tools from the command line.
 
-#### select_genes_from_gbk_to_fasta:
-    function receives a GBK-file as input, 
-    extracts the specified number of genes before and after each gene of interest (gene), 
-    and saves their protein sequence (translation) to a fasta file.
+### Filter FASTQ sequences
 
-### Error Handling
-Functions raise appropriate exceptions for invalid inputs.
+```bash
+python nucleic_tools_cli.py filter --input reads.fastq --output filtered.fastq --gc-bounds 30 70 --quality-threshold 30 --overwrite
+```
 
-## Requirements:
-Python 3.11+
+### Convert multiline FASTA to oneline
 
-biopython
+```bash
+python nucleic_tools_cli.py convert --input sequences.fasta
+```
 
-pathlib
+### Help
+
+```bash
+python nucleic_tools_cli.py --help
+python nucleic_tools_cli.py filter --help
+```
+
+To make the script executable: `chmod +x nucleic_tools_cli.py`
+
+## Logging
+
+The project uses Python's `logging` module. Logs are written to `logs/app.log` and to the console. The `filter_fastq` function logs informational messages (start, parameters, results) and errors.
+
+## Error Handling
+
+- `ValueError`  invalid sequence alphabet
+- `NotImplementedError`  calling `complement()` on `NucleicAcidSequence` directly
+- `FileExistsError`  output file already exists and `overwrite=False`
+- `RuntimeError`  errors during FASTQ file processing
+
+## Requirements
+
+- Python 3.11+
+- biopython
 
 ## License
-MIT License - see [LICENSE](LICENSE) file for details.
+
+MIT License  see [LICENSE](LICENSE) file for details.
